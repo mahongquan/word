@@ -1,4 +1,5 @@
 import React from 'react';
+import sprintf from 'sprintf';
 let ipcRenderer;
 if (window.require) {
   ipcRenderer = require('electron').ipcRenderer; //
@@ -7,7 +8,7 @@ class Card1 extends React.Component{
   render=()=>{
   	return(<div style={{width:"210mm",height:"148mm",backgroudColor:"green"}}>
 	        <p style={{marginTop:"90px",fontSize:"20px"}} align="center">
-	            <font face="SimHei">北京科技大学预收款凭条&emsp;&emsp;&emsp;No&emsp;00180035</font>
+	            <font face="SimHei">北京科技大学预收款凭条&emsp;&emsp;&emsp;No&emsp;0018{this.props.start}</font>
             </p>
 			<p  style={{margin:"60px 0 0 100px"}}>今收到
 			<input type="text" name="name" id="textfield" 
@@ -48,19 +49,50 @@ class Card1 extends React.Component{
 class E1 extends React.Component{
   constructor() {
     super();
+    this.state={
+        start:1,
+        num:1,
+    }
     if (ipcRenderer) {
       ipcRenderer.on('print', () => {
         console.log("print");
       });
     }
   }
-	render(){
-	 	return (
-<div className="A4">
-    <div className="sheet">
-        <Card1 />
-        <Card1 />
-    </div>
+  onClick=()=>{
+    console.log("click");
+    ipcRenderer.send('print', {});
+  }
+  onChange=(event)=>{
+    let start=parseInt(event.target.value,10);
+    this.setState({start:start});
+  }
+  onChange_num=(event)=>{
+    let start=parseInt(event.target.value,10);
+    this.setState({num:start});
+  }
+
+  render(){
+    let start=this.state.start;
+    let pages=[];
+    for(var i=0;i<this.state.num;i++){
+        let str_start=sprintf("%04d",start);
+        pages.push(<div key={i} className="sheet">
+        <Card1 start={str_start} />
+        <Card1 start={str_start} />
+    </div>);
+        start+=1;
+    }
+	return (
+<div>
+  <div className="only_screen">
+    <label>起始号码</label><input value={this.state.start} onChange={this.onChange}></input>
+    <label>页数</label><input value={this.state.num} onChange={this.onChange_num}></input>
+    <button  onClick={this.onClick}>打印</button>
+  </div>
+  <div className="A4">
+    {pages}
+  </div>
 </div>);
     }
 }

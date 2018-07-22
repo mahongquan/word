@@ -25,9 +25,15 @@ let mainWindow;
 
 
 ipcMain.on('getpath', (event, arg) => {
-    event.returnValue = process.argv[1];
+  event.returnValue = process.argv[1];
 })
+ipcMain.on('print', (event, arg) => {
+  console.log(event);
+  console.log(arg);
+  console.log(mainWindow);
 
+  mainWindow.webContents.print();
+})
 const createWindow = () => {
   console.log("createWindow");
 
@@ -49,7 +55,9 @@ const createWindow = () => {
           label: 'Print',
           accelerator: 'Ctrl+P',
           click: (item, win) =>{
-            win.webContents.send("print");
+            console.log(win);
+            win.webContents.print();
+            // win.webContents.send("print");
           },
         },
         {
