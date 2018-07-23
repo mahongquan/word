@@ -6,7 +6,7 @@ const  ipcRenderer = require('electron').ipcRenderer; //
 class Card1 extends React.Component{
   render=()=>{
   	return(<div style={{position:"relative",width:"210mm",height:"148mm",border:"solid 1px"}}>
-	        <p style={{marginTop:"90px",fontSize:"20px"}} align="center">
+	        <p style={{marginTop:"140px",fontSize:"20px"}} align="center">
 	            <font face="SimHei">北京科技大学预收款凭条&emsp;&emsp;&emsp;No&emsp;{this.props.start}</font>
             </p>
 			<p  style={{margin:"60px 0 0 100px"}}>今收到
@@ -45,7 +45,7 @@ class Card1 extends React.Component{
        <div style={{padding:"3px 3px 3px 3px"
                ,writingMode:"tb-rl"
                ,border:"1px solid #000"
-               ,position:"absolute",width:"1em",top:"34mm",right:"80px"}}>
+               ,position:"absolute",width:"1em",top:"40mm",right:"80px"}}>
        {this.props.lian}
        </div>
 		</div>);
@@ -117,12 +117,6 @@ class A4Lian extends React.Component{
   </div>
   <style jsx="true">
 {`
-.one {  
-    width: 16px;  
-    margin: 0 auto;  
-    line-height: 20px;  
-    font-size: 16px;
-}
 @page { margin: 0 }
 body { margin: 0 }
 .sheet {
