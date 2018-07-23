@@ -57,7 +57,11 @@ class A4Lian extends React.Component{
     let cfg=this.getconfig();
     if(!cfg.start) cfg.start=1;
     if(!cfg.num) cfg.num=1;
-    if(!cfg.year) cfg.year=18;
+    if(!cfg.year) {
+      let d=new Date();
+      let y=d.getFullYear();
+      cfg.year=y-2000;
+    }
     this.state=cfg;
     ipcRenderer.on("request_close",()=>{
       this.saveconfig(this.state);
@@ -92,7 +96,10 @@ class A4Lian extends React.Component{
     let start=parseInt(event.target.value,10);
     this.setState({num:start});
   }
-
+  onChange_year=(event)=>{
+    let start=parseInt(event.target.value,10);
+    this.setState({year:start});
+  }
   render(){
     let start=this.state.start;
     let pages=[];
@@ -107,7 +114,7 @@ class A4Lian extends React.Component{
 	return (
 <div>
   <div className="only_screen">
-
+    <label>year</label><input value={this.state.year} onChange={this.onChange_year}></input>
     <label>起始号码</label><input value={this.state.start} onChange={this.onChange}></input>
     <label>页数</label><input value={this.state.num} onChange={this.onChange_num}></input>
     <button  onClick={this.onClick}>打印</button>
