@@ -45,7 +45,6 @@ class Card1 extends React.Component{
 			 </p>
        <div style={{padding:"3px 3px 3px 3px"
                ,writingMode:"tb-rl"
-               ,border:"1px solid #000"
                ,position:"absolute",width:"1em",top:"40mm",right:"80px"}}>
        {this.props.lian}
        </div>
