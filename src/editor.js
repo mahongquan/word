@@ -43,8 +43,9 @@ class Card1 extends React.Component{
 			    <span >&emsp;&emsp;&emsp;年&emsp;月&emsp;日</span>
 			 </p>
        <div style={{padding:"3px 3px 3px 3px"
-       ,border:"1px solid #000"
-       ,position:"absolute",width:"1em",top:"34mm",right:"80px"}}>
+               ,writingMode:"tb-rl"
+               ,border:"1px solid #000"
+               ,position:"absolute",width:"1em",top:"34mm",right:"80px"}}>
        {this.props.lian}
        </div>
 		</div>);
@@ -98,14 +99,15 @@ class A4Lian extends React.Component{
     for(var i=0;i<this.state.num;i++){
         let str_start=sprintf("%04d%04d",this.state.year,start);
         pages.push(<div key={i} className="sheet">
-        <Card1 start={str_start} lian="第一联  存根联" />
-        <Card1 start={str_start} lian="第二联  交款方收执" />
+        <Card1 start={str_start} lian="第一联　存根联" />
+        <Card1 start={str_start} lian="第二联　交款方收执" />
     </div>);
         start+=1;
     }
 	return (
 <div>
   <div className="only_screen">
+
     <label>起始号码</label><input value={this.state.start} onChange={this.onChange}></input>
     <label>页数</label><input value={this.state.num} onChange={this.onChange_num}></input>
     <button  onClick={this.onClick}>打印</button>
@@ -115,6 +117,12 @@ class A4Lian extends React.Component{
   </div>
   <style jsx="true">
 {`
+.one {  
+    width: 16px;  
+    margin: 0 auto;  
+    line-height: 20px;  
+    font-size: 16px;
+}
 @page { margin: 0 }
 body { margin: 0 }
 .sheet {
