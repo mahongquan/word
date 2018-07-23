@@ -1,12 +1,12 @@
 {
-  "name": "electron-quick-start",
+  "name": "A4_Print",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "homepage": ".",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "react-scripts build"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
     "Electron",
     "quick",
@@ -18,5 +18,8 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "~1.8.4"
+  },
+  "dependencies": {
+    "react-scripts": "^1.1.4"
   }
 }

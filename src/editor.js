@@ -1,8 +1,9 @@
 import React from 'react';
 import sprintf from 'sprintf';
-const fs=require("fs");
-const  path=require("path");
-const  ipcRenderer = require('electron').ipcRenderer; //
+// const fs=require("fs");
+// const  path=require("path");
+// const  ipcRenderer = require('electron').ipcRenderer; //
+let {fs,path,ipcRenderer}=window.myremote;
 class Card1 extends React.Component{
   render=()=>{
   	return(<div style={{position:"relative",width:"210mm",height:"148mm",border:"solid 1px"}}>
