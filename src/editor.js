@@ -113,11 +113,15 @@ class A4Lian extends React.Component{
     }
 	return (
 <div>
-  <div className="only_screen">
-    <label>year</label><input value={this.state.year} onChange={this.onChange_year}></input>
+  <div style={{display:"flex", justifyContent:"space-between"}}className="only_screen">
+   <div>
     <label>起始号码</label><input value={this.state.start} onChange={this.onChange}></input>
     <label>页数</label><input value={this.state.num} onChange={this.onChange_num}></input>
     <button  onClick={this.onClick}>打印</button>
+   </div>
+   <div>
+    <label>year</label><input value={this.state.year} onChange={this.onChange_year}></input>
+   </div>
   </div>
   <div className="A4">
     {pages}
