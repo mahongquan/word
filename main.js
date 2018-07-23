@@ -15,24 +15,30 @@ let safeExit = false;
 
 //-----------------------------------------------------------------
 
-
+// var config = require('./config');
+// var configData = config.getSync();
+// console.log("config:"+configData);
 
 // Keep a global reference of the window object, if you don't, the window will
-
 // be closed automatically when the JavaScript object is garbage collected.
-
 let mainWindow;
-
-
+// ipcMain.on('getconfig', (event, arg) => {
+//   event.returnValue = configData;
+// })
+// ipcMain.on('saveconfig', (event, arg) => {
+//   console.log(arg)
+//   config.save(arg);
+//   mainWindow.webContents.send("config_saved");
+// })
 ipcMain.on('getpath', (event, arg) => {
   event.returnValue = process.argv[1];
 })
 ipcMain.on('print', (event, arg) => {
-  console.log(event);
-  console.log(arg);
-  console.log(mainWindow);
-
   mainWindow.webContents.print();
+})
+ipcMain.on('close', (event, arg) => {
+  safeExit=true;
+  mainWindow.close();
 })
 const createWindow = () => {
   console.log("createWindow");
@@ -111,17 +117,17 @@ const createWindow = () => {
   // Open the DevTools.
 
   // /mainWindow.webContents.openDevTools();
-  // mainWindow.on('close', (e) => {
+  mainWindow.on('close', (e) => {
 
-  //   if(!safeExit){
+    if(!safeExit){
 
-  //     e.preventDefault();
+      e.preventDefault();
 
-  //     mainWindow.webContents.send('action', 'exiting');
+      mainWindow.webContents.send('request_close');
 
-  //   }
+    }
 
-  // });
+  });
 
   //-----------------------------------------------------------------
 

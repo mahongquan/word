@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 const fs= require('fs');
 const path=require('path');
-console.log(path);
 function fileExist(p){
     if(fs.existsSync(p)){
       return true;
@@ -33,10 +32,9 @@ let where=getWhere();
 let App;
 // module_name="./AppRoutes";  
 module_name="./editor";
-if (module_name==="./editor"){
-    link("./","paper.css");
-}
-
+// if (module_name==="./editor"){
+//     link("./","paper.css");
+// }
 App=require(module_name).default;
 ReactDOM.render(<App />, document.getElementById('root'));
 

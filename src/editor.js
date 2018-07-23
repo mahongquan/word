@@ -1,14 +1,13 @@
 import React from 'react';
 import sprintf from 'sprintf';
-let ipcRenderer;
-if (window.require) {
-  ipcRenderer = require('electron').ipcRenderer; //
-}
+const fs=require("fs");
+const  path=require("path");
+const  ipcRenderer = require('electron').ipcRenderer; //
 class Card1 extends React.Component{
   render=()=>{
-  	return(<div style={{width:"210mm",height:"148mm",backgroudColor:"green"}}>
+  	return(<div style={{position:"relative",width:"210mm",height:"148mm",border:"solid 1px"}}>
 	        <p style={{marginTop:"90px",fontSize:"20px"}} align="center">
-	            <font face="SimHei">北京科技大学预收款凭条&emsp;&emsp;&emsp;No&emsp;0018{this.props.start}</font>
+	            <font face="SimHei">北京科技大学预收款凭条&emsp;&emsp;&emsp;No&emsp;{this.props.start}</font>
             </p>
 			<p  style={{margin:"60px 0 0 100px"}}>今收到
 			<input type="text" name="name" id="textfield" 
@@ -43,21 +42,42 @@ class Card1 extends React.Component{
 			    style={{border:"none",borderBottom:"1px solid #000"}} />
 			    <span >&emsp;&emsp;&emsp;年&emsp;月&emsp;日</span>
 			 </p>
+       <div style={{padding:"3px 3px 3px 3px"
+       ,border:"1px solid #000"
+       ,position:"absolute",width:"1em",top:"34mm",right:"80px"}}>
+       {this.props.lian}
+       </div>
 		</div>);
   }
 }
-class E1 extends React.Component{
+class A4Lian extends React.Component{
   constructor() {
     super();
-    this.state={
-        start:1,
-        num:1,
+    let cfg=this.getconfig();
+    if(!cfg.start) cfg.start=1;
+    if(!cfg.num) cfg.num=1;
+    if(!cfg.year) cfg.year=18;
+    this.state=cfg;
+    ipcRenderer.on("request_close",()=>{
+      this.saveconfig(this.state);
+      ipcRenderer.send("close");
+    })
+  }
+  getconfig=()=>{
+    try{
+      const configName = 'config.json';
+      let configPath = path.join(__dirname, configName);
+      let data=fs.readFileSync(configPath, { enconding: 'utf-8' });
+      return JSON.parse(data);
     }
-    if (ipcRenderer) {
-      ipcRenderer.on('print', () => {
-        console.log("print");
-      });
+    catch(e){
+      return {};
     }
+  }
+  saveconfig=(data)=>{
+    const configName = 'config.json';
+    let configPath = path.join(__dirname, configName);
+    fs.writeFileSync(configPath, JSON.stringify(data));
   }
   onClick=()=>{
     console.log("click");
@@ -76,10 +96,10 @@ class E1 extends React.Component{
     let start=this.state.start;
     let pages=[];
     for(var i=0;i<this.state.num;i++){
-        let str_start=sprintf("%04d",start);
+        let str_start=sprintf("%04d%04d",this.state.year,start);
         pages.push(<div key={i} className="sheet">
-        <Card1 start={str_start} />
-        <Card1 start={str_start} />
+        <Card1 start={str_start} lian="第一联  存根联" />
+        <Card1 start={str_start} lian="第二联  交款方收执" />
     </div>);
         start+=1;
     }
@@ -93,7 +113,60 @@ class E1 extends React.Component{
   <div className="A4">
     {pages}
   </div>
+  <style jsx="true">
+{`
+@page { margin: 0 }
+body { margin: 0 }
+.sheet {
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  page-break-after: always;
+}
+
+/** Paper sizes **/
+.A3               .sheet { width: 297mm; height: 419mm }
+.A3.landscape     .sheet { width: 420mm; height: 296mm }
+.A4               .sheet { width: 210mm; height: 296mm }
+.A4.landscape     .sheet { width: 297mm; height: 209mm }
+.A5               .sheet { width: 148mm; height: 209mm }
+.A5.landscape     .sheet { width: 210mm; height: 147mm }
+.letter           .sheet { width: 216mm; height: 279mm }
+.letter.landscape .sheet { width: 280mm; height: 215mm }
+.legal            .sheet { width: 216mm; height: 356mm }
+.legal.landscape  .sheet { width: 357mm; height: 215mm }
+
+/** Padding area **/
+.sheet.padding-10mm { padding: 10mm }
+.sheet.padding-15mm { padding: 15mm }
+.sheet.padding-20mm { padding: 20mm }
+.sheet.padding-25mm { padding: 25mm }
+
+/** For screen preview **/
+@media screen {
+  body { background: #e0e0e0 }
+  .sheet {
+    background: white;
+    box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);
+    margin: 5mm auto;
+  }
+}
+
+/** Fix for Chrome issue #273306 **/
+@media print {
+  .only_screen{display: none}
+           .A3.landscape { width: 420mm }
+  .A3, .A4.landscape { width: 297mm }
+  .A4, .A5.landscape { width: 210mm }
+  .A5                    { width: 148mm }
+  .letter, .legal    { width: 216mm }
+  .letter.landscape      { width: 280mm }
+  .legal.landscape       { width: 357mm }
+}
+`}
+  </style>
 </div>);
     }
 }
-export default E1;
+export default A4Lian;
