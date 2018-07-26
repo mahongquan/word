@@ -31,12 +31,15 @@ let mainWindow;
 //   mainWindow.webContents.send("config_saved");
 // })
 ipcMain.on('getpath', (event, arg) => {
-  event.returnValue = process.argv[1];
+  // console.log("getpath")
+  // console.log(__dirname);
+  event.returnValue = __dirname;
 })
 ipcMain.on('print', (event, arg) => {
   mainWindow.webContents.print();
 })
 ipcMain.on('close', (event, arg) => {
+  // console.log("ipcMain on close");
   safeExit=true;
   mainWindow.close();
 })
@@ -49,7 +52,7 @@ else{
    indexUrl=`file://${__dirname}/build/index.html`; 
 }
 const createWindow = () => {
-  console.log("createWindow");
+  // console.log("createWindow");
 
   // Create the browser window.
 
@@ -123,6 +126,8 @@ const createWindow = () => {
 
   // /mainWindow.webContents.openDevTools();
   mainWindow.on('close', (e) => {
+    // console.log("close");
+    // console.log(e);
 
     if(!safeExit){
 

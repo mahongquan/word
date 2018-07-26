@@ -59,6 +59,7 @@ class Card1 extends React.Component{
 class A4Lian extends React.Component{
   constructor() {
     super();
+    this.initpath=window.require('electron').ipcRenderer.sendSync('getpath');
     let cfg=this.getconfig();
     if(!cfg.start) cfg.start=1;
     if(!cfg.num) cfg.num=1;
@@ -76,7 +77,7 @@ class A4Lian extends React.Component{
   getconfig=()=>{
     try{
       const configName = 'config.json';
-      let configPath = path.join(__dirname, configName);
+      let configPath = path.join(this.initpath, configName);
       let data=fs.readFileSync(configPath, { enconding: 'utf-8' });
       return JSON.parse(data);
     }
@@ -86,7 +87,7 @@ class A4Lian extends React.Component{
   }
   saveconfig=(data)=>{
     const configName = 'config.json';
-    let configPath = path.join(__dirname, configName);
+    let configPath = path.join(this.initpath, configName);
     fs.writeFileSync(configPath, JSON.stringify(data));
   }
   onClick=()=>{
