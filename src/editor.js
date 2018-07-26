@@ -1,8 +1,11 @@
 import React from 'react';
 import sprintf from 'sprintf';
-const fs=window.require("fs");
-const path=window.require("path");
-const ipcRenderer = window.require('electron').ipcRenderer; //
+let fs,path,ipcRenderer;
+if(window.require){
+  fs=window.require("fs");
+  path=window.require("path");
+  ipcRenderer = window.require('electron').ipcRenderer; //
+}
 class Card1 extends React.Component{
   render=()=>{
   	return(
@@ -59,7 +62,9 @@ class Card1 extends React.Component{
 class A4Lian extends React.Component{
   constructor() {
     super();
-    this.initpath=window.require('electron').ipcRenderer.sendSync('getpath');
+    if(window.require){
+      this.initpath=window.require('electron').ipcRenderer.sendSync('getpath');
+    }
     let cfg=this.getconfig();
     if(!cfg.start) cfg.start=1;
     if(!cfg.num) cfg.num=1;
@@ -69,42 +74,82 @@ class A4Lian extends React.Component{
       cfg.year=y-2000;
     }
     this.state=cfg;
-    ipcRenderer.on("request_close",()=>{
-      this.saveconfig(this.state);
-      ipcRenderer.send("close");
-    })
+    if(ipcRenderer){
+      ipcRenderer.on("request_close",()=>{
+        this.saveconfig(this.state);
+        ipcRenderer.send("close");
+      })
+    }
   }
   getconfig=()=>{
-    try{
+    if(window.require){
+      try{
+        const configName = 'config.json';
+        let configPath = path.join(this.initpath, configName);
+        let data=fs.readFileSync(configPath, { enconding: 'utf-8' });
+        return JSON.parse(data);
+      }
+      catch(e){
+        return {};
+      }
+    }
+    else{
+      let todos=localStorage.getItem("a4_print");
+      let initialState={};
+      if (todos) {
+        try{
+          initialState=JSON.parse(todos);
+        }
+        catch(SyntaxError){
+          initialState={};
+        }
+      }
+      return initialState
+    }
+  }
+  componentWillUnmount=()=>{
+    this.saveconfig();
+  }
+
+  saveconfig=(data)=>{
+    if(window.require){
       const configName = 'config.json';
       let configPath = path.join(this.initpath, configName);
-      let data=fs.readFileSync(configPath, { enconding: 'utf-8' });
-      return JSON.parse(data);
+      fs.writeFileSync(configPath, JSON.stringify(data));
     }
-    catch(e){
-      return {};
+    else{
+      localStorage.setItem("a4_print",JSON.stringify(data));
     }
-  }
-  saveconfig=(data)=>{
-    const configName = 'config.json';
-    let configPath = path.join(this.initpath, configName);
-    fs.writeFileSync(configPath, JSON.stringify(data));
   }
   onClick=()=>{
-    console.log("click");
-    ipcRenderer.send('print', {});
+    if(ipcRenderer){
+      ipcRenderer.send('print', {});
+    }
   }
   onChange=(event)=>{
     let start=parseInt(event.target.value,10);
-    this.setState({start:start});
+    this.setState({start:start},()=>{
+      if(!window.require){
+        localStorage.setItem("a4_print",JSON.stringify(this.state));
+      }
+    });
   }
   onChange_num=(event)=>{
     let start=parseInt(event.target.value,10);
-    this.setState({num:start});
+    this.setState({num:start},()=>{
+      if(!window.require){
+        localStorage.setItem("a4_print",JSON.stringify(this.state));
+      }
+
+    });
   }
   onChange_year=(event)=>{
     let start=parseInt(event.target.value,10);
-    this.setState({year:start});
+    this.setState({year:start},()=>{
+      if(!window.require){
+        localStorage.setItem("a4_print",JSON.stringify(this.state));
+      }
+    });
   }
   render(){
     let start=this.state.start;

@@ -6,6 +6,7 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron . --local --dev",
+    "server": "react-scripts start",
     "build": "react-scripts build"
   },
   "keywords": [
