@@ -39,10 +39,11 @@ body { margin: 0 }
 /** Fix for Chrome issue #273306 **/
 @media print {
   .only_screen{display: none}
-           .A3.landscape { width: 420mm }
+
+  .A3.landscape { width: 420mm }
   .A3, .A4.landscape { width: 297mm }
   .A4, .A5.landscape { width: 210mm }
-  .A5                    { width: 148mm }
+  .A5                { width: 148mm }
   .letter, .legal    { width: 216mm }
   .letter.landscape      { width: 280mm }
   .legal.landscape       { width: 357mm }

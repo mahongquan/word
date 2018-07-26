@@ -1,54 +1,59 @@
 import React from 'react';
 import sprintf from 'sprintf';
-// const fs=require("fs");
-// const  path=require("path");
-// const  ipcRenderer = require('electron').ipcRenderer; //
-let {fs,path,ipcRenderer}=window.myremote;
+const fs=window.require("fs");
+const path=window.require("path");
+const ipcRenderer = window.require('electron').ipcRenderer; //
 class Card1 extends React.Component{
   render=()=>{
-  	return(<div style={{position:"relative",width:"210mm",height:"148mm",border:"solid 1px"}}>
-	        <p style={{marginTop:"140px",fontSize:"20px"}} align="center">
+  	return(
+  <div style={{
+            position:"relative"
+            ,width:"210mm"
+            ,height:"148mm"
+            ,border:"solid 1px"
+          }}>
+    <div style={{
+            padding:"100px 100px 100px 100px"
+          }}>
+	    <p style={{marginTop:"40px",marginLeft:"100px",fontSize:"20px"}}>
 	            <font face="SimHei">北京科技大学预收款凭条&emsp;&emsp;&emsp;No&emsp;{this.props.start}</font>
-            </p>
-			<p  style={{margin:"60px 0 0 100px"}}>今收到
-			<input type="text" name="name" id="textfield" 
-				style={{width:"130mm"
-					,border:"none",borderBottom:"1px solid #000"}} />
+      </p>
+      <div style={{height:"1em"}}></div>
+			<p>
+          <span>今收到</span>
+			   <input type="text"  className="line_input"  style={{width:"130mm"}}/>
 			</p>
-			<p  style={{margin:"10px 0 0 100px"}}>
+			<p>
 			    <span>交&emsp;来</span>
-			    <input type="text" name="name" id="textfield" 
-			    style={{width:"130mm",border:"none",
-			    borderBottom:"1px solid #000"}} />
+			    <input type="text"  className="line_input"  style={{width:"130mm"}} />
 			</p>
-			<p  style={{margin:"10px 0 0 100px"}}>
+			<p>
 			    <span>人民币（大写）</span>
-			    <input type="text" name="name" id="textfield" 
-			    style={{width:"54mm",border:"none",borderBottom:"1px solid #000"}} />
+			    <input type="text"  className="line_input"   style={{width:"54mm"}} />
 			    <span>￥</span>
-			    <input type="text" name="name" id="textfield" 
-			    style={{width:"52mm",border:"none",borderBottom:"1px solid #000"}} />
+			    <input type="text"  className="line_input"   style={{width:"52mm"}} />
 			</p>
 			<div style={{height:"2em"}}></div>
-			<p  style={{margin:"10px 0 0 100px"}}>
+			<p>
 			    <span>收款单位</span>
 			    <span style={{margin:"0 0 0 38mm"}}>收款人</span>
 			</p>
-			<p  style={{margin:"10px 0 0 100px"}}>
+			<p>
 			    <span>(公章)</span>
-			    <input type="text" name="name" id="textfield" 
-			    style={{border:"none",borderBottom:"1px solid #000"}} />
+			    <input type="text"  className="line_input"/>
 			    <span >(签章)</span>
-			    <input type="text" name="name" id="textfield" 
-			    style={{border:"none",borderBottom:"1px solid #000"}} />
+			    <input type="text"  className="line_input"/>
 			    <span >&emsp;&emsp;&emsp;年&emsp;月&emsp;日</span>
 			 </p>
-       <div style={{padding:"3px 3px 3px 3px"
+    </div>
+    <div style={{padding:"3px 3px 3px 3px"
                ,writingMode:"tb-rl"
-               ,position:"absolute",width:"1em",top:"40mm",right:"80px"}}>
+               ,position:"absolute"
+               ,width:"1em"
+               ,top:"50mm",left:"190mm"}}>
        {this.props.lian}
-       </div>
-		</div>);
+    </div>
+	</div>);
   }
 }
 class A4Lian extends React.Component{
@@ -113,21 +118,27 @@ class A4Lian extends React.Component{
     }
 	return (
 <div>
-  <div style={{display:"flex", justifyContent:"space-between"}}className="only_screen">
-   <div>
-    <label>起始号码</label><input value={this.state.start} onChange={this.onChange}></input>
-    <label>页数</label><input value={this.state.num} onChange={this.onChange_num}></input>
-    <button  onClick={this.onClick}>打印</button>
-   </div>
-   <div>
-    <label>year</label><input value={this.state.year} onChange={this.onChange_year}></input>
-   </div>
+  <div className="only_screen">
+    <div style={{display:"flex", justifyContent:"space-between"}}>
+     <div>
+      <label>起始号码</label><input value={this.state.start} onChange={this.onChange}></input>
+      <label>页数</label><input value={this.state.num} onChange={this.onChange_num}></input>
+      <button  onClick={this.onClick}>打印</button>
+     </div>
+     <div>
+      <label>year</label><input value={this.state.year} onChange={this.onChange_year}></input>
+     </div>
+    </div>
   </div>
   <div className="A4">
     {pages}
   </div>
   <style jsx="true">
 {`
+.line_input{
+ border:none;
+ border-bottom:1px solid #000;
+}
 @page { margin: 0 }
 body { margin: 0 }
 .sheet {

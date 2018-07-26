@@ -40,6 +40,14 @@ ipcMain.on('close', (event, arg) => {
   safeExit=true;
   mainWindow.close();
 })
+const devMode = (process.argv || []).indexOf('--local') !== -1;
+let indexUrl;
+if(devMode){
+   indexUrl=`file://${__dirname}/src/index.html`;
+}
+else{
+   indexUrl=`file://${__dirname}/build/index.html`; 
+}
 const createWindow = () => {
   console.log("createWindow");
 
@@ -74,7 +82,7 @@ const createWindow = () => {
         {
           label: 'HOME',
           accelerator: 'Ctrl+H',
-          click: (item, win) =>{win.loadURL(`file://${__dirname}/src/index.html`);},
+          click: (item, win) =>{win.loadURL(indexUrl);},
         },
         {
           label: 'BACK',
@@ -104,15 +112,12 @@ const createWindow = () => {
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
   //
-  const devMode = (process.argv || []).indexOf('--local') !== -1;
   if (devMode) {
       mainWindow.openDevTools();
   }
   // and load the index.html of the app.
 
-  mainWindow.loadURL(`file://${__dirname}/src/index.html`);
-
-
+  mainWindow.loadURL(indexUrl);
 
   // Open the DevTools.
 

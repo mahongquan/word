@@ -2,17 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 var electron=require('electron');
 // console.log(electron);
-window.myremote={
-  fs:require('fs'),
-  path:require("path"),
-  //sqlectron:require("sqlectron-core"),
-  electron:electron,
-  remote:electron.remote,
-  ipcRenderer:electron.ipcRenderer,
-  shell:electron.shell,
-  webFrame:electron.webFrame,
-  clipboard:electron.clipboard
-};
+// window.myremote={
+//   fs:require('fs'),
+//   path:require("path"),
+//   //sqlectron:require("sqlectron-core"),
+//   electron:electron,
+//   remote:electron.remote,
+//   ipcRenderer:electron.ipcRenderer,
+//   shell:electron.shell,
+//   webFrame:electron.webFrame,
+//   clipboard:electron.clipboard
+// };
 const fs= require('fs');
 const path=require('path');
 function fileExist(p){
