@@ -1,242 +1,101 @@
 import React from 'react';
 import sprintf from 'sprintf';
-let fs,path,ipcRenderer;
-if(window.require){
-  fs=window.require("fs");
-  path=window.require("path");
-  ipcRenderer = window.require('electron').ipcRenderer; //
-}
-class Card1 extends React.Component{
-  render=()=>{
-  	return(
-  <div style={{
-            position:"relative"
-            ,width:"210mm"
-            ,height:"148mm"
-            ,border:"solid 1px"
-          }}>
-    <div style={{
-            padding:"100px 100px 100px 100px"
-          }}>
-	    <p style={{marginTop:"40px",marginLeft:"100px",fontSize:"20px"}}>
-	            <font face="SimHei">北京科技大学预收款凭条&emsp;&emsp;&emsp;No&emsp;{this.props.start}</font>
-      </p>
-      <div style={{height:"1em"}}></div>
-			<p>
-          <span>今收到</span>
-			   <input type="text"  className="line_input"  style={{width:"130mm"}}/>
-			</p>
-			<p>
-			    <span>交&emsp;来</span>
-			    <input type="text"  className="line_input"  style={{width:"130mm"}} />
-			</p>
-			<p>
-			    <span>人民币（大写）</span>
-			    <input type="text"  className="line_input"   style={{width:"54mm"}} />
-			    <span>￥</span>
-			    <input type="text"  className="line_input"   style={{width:"52mm"}} />
-			</p>
-			<div style={{height:"2em"}}></div>
-			<p>
-			    <span>收款单位</span>
-			    <span style={{margin:"0 0 0 38mm"}}>收款人</span>
-			</p>
-			<p>
-			    <span>(公章)</span>
-			    <input type="text"  className="line_input"/>
-			    <span >(签章)</span>
-			    <input type="text"  className="line_input"/>
-			    <span >&emsp;&emsp;&emsp;年&emsp;月&emsp;日</span>
-			 </p>
-    </div>
-    <div style={{padding:"3px 3px 3px 3px"
-               ,writingMode:"tb-rl"
-               ,position:"absolute"
-               ,width:"1em"
-               ,top:"50mm",left:"190mm"}}>
-       {this.props.lian}
-    </div>
-	</div>);
-  }
-}
-class A4Lian extends React.Component{
-  constructor() {
-    super();
-    if(window.require){
-      this.initpath=window.require('electron').ipcRenderer.sendSync('getpath');
-    }
-    let cfg=this.getconfig();
-    if(!cfg.start) cfg.start=1;
-    if(!cfg.num) cfg.num=1;
-    if(!cfg.year) {
-      let d=new Date();
-      let y=d.getFullYear();
-      cfg.year=y-2000;
-    }
-    this.state=cfg;
-    if(ipcRenderer){
-      ipcRenderer.on("request_close",()=>{
-        this.saveconfig(this.state);
-        ipcRenderer.send("close");
-      })
-    }
-  }
-  getconfig=()=>{
-    if(window.require){
-      try{
-        const configName = 'config.json';
-        let configPath = path.join(this.initpath, configName);
-        let data=fs.readFileSync(configPath, { enconding: 'utf-8' });
-        return JSON.parse(data);
-      }
-      catch(e){
-        return {};
-      }
-    }
-    else{
-      let todos=localStorage.getItem("a4_print");
-      let initialState={};
-      if (todos) {
-        try{
-          initialState=JSON.parse(todos);
-        }
-        catch(SyntaxError){
-          initialState={};
-        }
-      }
-      return initialState
-    }
-  }
-  componentWillUnmount=()=>{
-    this.saveconfig();
-  }
+import ReactQuill from 'react-quill';
 
-  saveconfig=(data)=>{
-    if(window.require){
-      const configName = 'config.json';
-      let configPath = path.join(this.initpath, configName);
-      fs.writeFileSync(configPath, JSON.stringify(data));
-    }
-    else{
-      localStorage.setItem("a4_print",JSON.stringify(data));
-    }
-  }
-  onClick=()=>{
-    if(ipcRenderer){
-      ipcRenderer.send('print', {});
-    }
-  }
-  onChange=(event)=>{
-    let start=parseInt(event.target.value,10);
-    this.setState({start:start},()=>{
-      if(!window.require){
-        localStorage.setItem("a4_print",JSON.stringify(this.state));
-      }
-    });
-  }
-  onChange_num=(event)=>{
-    let start=parseInt(event.target.value,10);
-    this.setState({num:start},()=>{
-      if(!window.require){
-        localStorage.setItem("a4_print",JSON.stringify(this.state));
-      }
+/*
+ * Custom "star" icon for the toolbar using an Octicon
+ * https://octicons.github.io
+ */
+const CustomButton = () => <label>star</label>
 
-    });
-  }
-  onChange_year=(event)=>{
-    let start=parseInt(event.target.value,10);
-    this.setState({year:start},()=>{
-      if(!window.require){
-        localStorage.setItem("a4_print",JSON.stringify(this.state));
-      }
-    });
-  }
-  render(){
-    let start=this.state.start;
-    let pages=[];
-    for(var i=0;i<this.state.num;i++){
-        let str_start=sprintf("%04d%04d",this.state.year,start);
-        pages.push(<div key={i} className="sheet">
-        <Card1 start={str_start} lian="第一联　存根联" />
-        <Card1 start={str_start} lian="第二联　交款方收执" />
-    </div>);
-        start+=1;
-    }
-	return (
-<div>
-  <div className="only_screen">
-    <div style={{display:"flex", justifyContent:"space-between"}}>
-     <div>
-      <label>起始号码</label><input value={this.state.start} onChange={this.onChange}></input>
-      <label>页数</label><input value={this.state.num} onChange={this.onChange_num}></input>
-      <button  onClick={this.onClick}>打印</button>
-     </div>
-     <div>
-      <label>year</label><input value={this.state.year} onChange={this.onChange_year}></input>
-     </div>
-    </div>
+/*
+ * Event handler to be attached using Quill toolbar module
+ * http://quilljs.com/docs/modules/toolbar/
+ */
+function insertStar () {
+  const cursorPosition = this.quill.getSelection().index
+  this.quill.insertText(cursorPosition, "★")
+  this.quill.setSelection(cursorPosition + 1)
+}
+
+/*
+ * Custom toolbar component including insertStar button and dropdowns
+ */
+const CustomToolbar = () => (
+  <div id="toolbar">
+    <select className="ql-header" defaultValue={""} onChange={e => e.persist()}>
+      <option value="1"></option>
+      <option value="2">
+      </option>
+      <option ></option>
+    </select>
+    <button className="ql-bold"></button>
+    <button className="ql-italic"></button>
+    <select className="ql-color">
+      <option value="red"></option>
+      <option value="green"></option>
+      <option value="blue"></option>
+      <option value="orange"></option>
+      <option value="violet"></option>
+      <option value="#d0d1d2"></option>
+      <option ></option>
+    </select>
+    <button className="ql-insertStar">
+      <CustomButton />
+    </button>
   </div>
-  <div className="A4">
-    {pages}
-  </div>
-  <style jsx="true">
-{`
-.line_input{
- border:none;
- border-bottom:1px solid #000;
-}
-@page { margin: 0 }
-body { margin: 0 }
-.sheet {
-  margin: 0;
-  overflow: hidden;
-  position: relative;
-  box-sizing: border-box;
-  page-break-after: always;
-}
+)
 
-/** Paper sizes **/
-.A3               .sheet { width: 297mm; height: 419mm }
-.A3.landscape     .sheet { width: 420mm; height: 296mm }
-.A4               .sheet { width: 210mm; height: 296mm }
-.A4.landscape     .sheet { width: 297mm; height: 209mm }
-.A5               .sheet { width: 148mm; height: 209mm }
-.A5.landscape     .sheet { width: 210mm; height: 147mm }
-.letter           .sheet { width: 216mm; height: 279mm }
-.letter.landscape .sheet { width: 280mm; height: 215mm }
-.legal            .sheet { width: 216mm; height: 356mm }
-.legal.landscape  .sheet { width: 357mm; height: 215mm }
+/*
+ * Editor component with custom toolbar and content containers
+ */
+export default class Editor extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = { editorHtml: '' }
+    this.handleChange = this.handleChange.bind(this)
+  }
 
-/** Padding area **/
-.sheet.padding-10mm { padding: 10mm }
-.sheet.padding-15mm { padding: 15mm }
-.sheet.padding-20mm { padding: 20mm }
-.sheet.padding-25mm { padding: 25mm }
+  handleChange (html) {
+  	this.setState({ editorHtml: html });
+  }
 
-/** For screen preview **/
-@media screen {
-  body { background: #e0e0e0 }
-  .sheet {
-    background: white;
-    box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);
-    margin: 5mm auto;
+  render() {
+    return (
+      <div className="text-editor">
+        <CustomToolbar />
+        <ReactQuill
+          onChange={this.handleChange}
+          placeholder={this.props.placeholder}
+          modules={Editor.modules}
+        />
+      </div>
+    )
   }
 }
 
-/** Fix for Chrome issue #273306 **/
-@media print {
-  .only_screen{display: none}
-           .A3.landscape { width: 420mm }
-  .A3, .A4.landscape { width: 297mm }
-  .A4, .A5.landscape { width: 210mm }
-  .A5                    { width: 148mm }
-  .letter, .legal    { width: 216mm }
-  .letter.landscape      { width: 280mm }
-  .legal.landscape       { width: 357mm }
-}
-`}
-  </style>
-</div>);
+/*
+ * Quill modules to attach to editor
+ * See http://quilljs.com/docs/modules/ for complete options
+ */
+Editor.modules = {
+  toolbar: {
+    container: "#toolbar",
+    handlers: {
+      "insertStar": insertStar,
     }
+  }
 }
-export default A4Lian;
+
+/*
+ * Quill editor formats
+ * See http://quilljs.com/docs/formats/
+ */
+Editor.formats = [
+  'header', 'font', 'size',
+  'bold', 'italic', 'underline', 'strike', 'blockquote',
+  'list', 'bullet', 'indent',
+  'link', 'image', 'color',
+]
+
+
