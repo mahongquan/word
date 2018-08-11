@@ -31,14 +31,8 @@ let module_name;
 let where=getWhere();
 let App;
 // module_name="./AppRoutes";  
-module_name="./word";//"./word";
-if (module_name=="./wordW"){
-  link(where,'node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
-}
-else if(module_name=="./word"){
-   link(where,'node_modules/react-quill/dist/quill.snow.css');
-}
-link("./","animate.min.css");
+module_name="./ppt";//"./word";
+link("./","main.css");
 App=require(module_name).default;
 ReactDOM.render(<App />, document.getElementById('root'));
 
