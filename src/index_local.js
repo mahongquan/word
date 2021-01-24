@@ -36,7 +36,7 @@ if (module_name=="./wordW"){
   link(where,'node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
 }
 else if(module_name=="./word"){
-   link(where,'node_modules/react-quill/dist/quill.snow.css');
+   link("./",'quill.snow.css');
 }
 link("./","animate.min.css");
 App=require(module_name).default;

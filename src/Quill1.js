@@ -19,6 +19,8 @@ const CustomToolbar = () => (
       <option ></option>
       <option value="serif"></option>
       <option value="monospace"></option>
+      <option value="黑体"></option>
+      <option value="宋体"></option>
     </select>
     <select className="ql-size" defaultValue={""} onChange={e => e.persist()}>
       <option value="small"></option>
@@ -93,7 +95,7 @@ export default class MyComponent extends React.Component {
   }
 insertStar=()=>{
   console.log(this);
-  console.log(arguments);
+  // console.log(arguments);
   const cursorPosition = this.refs.quill.getEditor().getSelection().index
   this.refs.quill.getEditor().insertText(cursorPosition, "★")
   this.refs.quill.getEditor().setSelection(cursorPosition + 1)

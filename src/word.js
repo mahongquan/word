@@ -3,8 +3,9 @@ import sprintf from 'sprintf';
 import Quill1 from './Quill1';
 // import Quill1 from './W1';
 const toolbar_h=70;
-let fs,path,ipcRenderer,electron;
+let fs,path,ipcRenderer,electron,cheerio;
 if(window.require){
+  cheerio = require('cheerio');
   fs=window.require("fs");
   path=window.require("path");
   ipcRenderer = window.require('electron').ipcRenderer; //
@@ -64,20 +65,38 @@ export default class MyComponent extends React.Component {
               'saveFile',
           ],
           filters: [
-              { name: '*.html', extensions: ['html'] },
+              { name: '*.quill.html', extensions: ['quill.html'] },
+              {name: '*.txt', extensions: ['txt'] }
           ]
-      },(res)=>{
+      }).then((res)=>{
+        console.log(res);
           if(res){
-            this.anim();
-            this.setState({filename:res});
-            fs.writeFileSync(res, this.state.text);
+            this.save_filename(res.filePath);
           }
-      })
+      }).catch(err => {
+      console.log(err)
+    });
 }
+  save_filename=(filename)=>{
+            this.anim();
+            this.setState({filename:filename});
+            let style=fs.readFileSync(path.join(__dirname,'./quill.snow.css'), {encoding:"utf-8",flag:"r"});
+            let content=`<!DOCTYPE  html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<style>${style}</style>
+</head><body>
+<div class="ql-container ql-snow">
+<div class="ql-editor" data-gramm="false" contenteditable="false">
+${this.state.text}</div></div>
+</body>`;
+            fs.writeFileSync(filename, content);
+
+  }
   save_click = () => {
       if(this.state.filename!=""){
-          this.anim();
-          fs.writeFileSync(this.state.filename, this.state.text);        
+          this.save_filename(this.state.filename);
       }
       else{
         this.save_as_click();
@@ -91,23 +110,23 @@ export default class MyComponent extends React.Component {
               'openFile',
           ],
           filters: [
-              { name: '*.html', extensions: ['html'] },
+              { name: '*.quill.html', extensions: ['quill.html'] },
+              { name: '*.txt', extensions: ['txt'] }
           ]
-      },(res)=>{
+      }).then((res)=>{
           if(!res) return;
-          // const cheerio = require('cheerio');
-          this.setState({filename:res[0]});
-          let content=fs.readFileSync(res[0], {encoding:"utf-8",flag:"r"});
-          // let $ = cheerio.load(content,{
-          //    xmlMode: true,
-          //    lowerCaseTags: false
-          // });
-          // this.setState({css:$("body style").text()});
-          // this.setState({head:$("head").html()});
-          // $("body style").remove();
-          // this.setState({html:$("body").html(),showPreview:"flex"});
-          this.setState({text: content});
-      })
+          console.log(res);
+          this.setState({filename:res.filePaths[0]});
+          let content=fs.readFileSync(res.filePaths[0], {encoding:"utf-8",flag:"r"});
+          let $ = cheerio.load(content,{
+             xmlMode: true,
+             lowerCaseTags: false
+          });
+          let body=$("div.ql-editor").html();
+          this.setState({text: body});
+      }).catch(err => {
+      console.log(err)
+    });
  };
   handleChange=(value)=>{
     console.log(value);
